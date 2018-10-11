@@ -1,16 +1,22 @@
 ### https://machinelearningmastery.com/implement-backpropagation-algorithm-scratch-python/
 
 
-#%% DEFINITION
+#%% DEFINE FUNCTIONS
 # Backprop on the Seeds Dataset
 from random import seed
 from random import randrange
 from random import random
 from csv import reader
 from math import exp
+import inspect
+import sys
+from pprint import pprint
+
+custom_hist = []
 
 # Load a CSV file
 def load_csv(filename):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     dataset = list()
     with open(filename, 'r') as file:
         csv_reader = reader(file)
@@ -22,11 +28,13 @@ def load_csv(filename):
 
 # Convert string column to float
 def str_column_to_float(dataset, column):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     for row in dataset:
         row[column] = float(row[column].strip())
 
 # Convert string column to integer
 def str_column_to_int(dataset, column):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     class_values = [row[column] for row in dataset]
     unique = set(class_values)
     lookup = dict()
@@ -38,18 +46,21 @@ def str_column_to_int(dataset, column):
 
 # Find the min and max values for each column
 def dataset_minmax(dataset):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     minmax = list()
     stats = [[min(column), max(column)] for column in zip(*dataset)]
     return stats
 
 # Rescale dataset columns to the range 0-1
 def normalize_dataset(dataset, minmax):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     for row in dataset:
         for i in range(len(row)-1):
             row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
 
 # Split a dataset into k folds
 def cross_validation_split(dataset, n_folds):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     dataset_split = list()
     dataset_copy = list(dataset)
     fold_size = int(len(dataset) / n_folds)
@@ -63,6 +74,7 @@ def cross_validation_split(dataset, n_folds):
 
 # Calculate accuracy percentage
 def accuracy_metric(actual, predicted):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     correct = 0
     for i in range(len(actual)):
         if actual[i] == predicted[i]:
@@ -71,6 +83,7 @@ def accuracy_metric(actual, predicted):
 
 # Evaluate an algorithm using a cross validation split
 def evaluate_algorithm(dataset, algorithm, n_folds, *args):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     folds = cross_validation_split(dataset, n_folds)
     scores = list()
     for fold in folds:
@@ -90,17 +103,34 @@ def evaluate_algorithm(dataset, algorithm, n_folds, *args):
 
 # Calculate neuron activation for an input
 def activate(weights, inputs):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     activation = weights[-1]
     for i in range(len(weights)-1):
         activation += weights[i] * inputs[i]
+        # print("activation", activation)
     return activation
 
 # Transfer neuron activation
 def transfer(activation):
-    return 1.0 / (1.0 + exp(-activation))
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
+    
+    ## sigmoid
+    # return 1.0 / (1.0 + exp(-activation))
+    
+    ## ReLu
+    # return max(0, activation)
+
+    ## Elu
+    if(activation>=0):
+        return activation
+    else:
+        return (exp(activation)-1)
+
+
 
 # Forward propagate input to a network output
 def forward_propagate(network, row):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     inputs = row
     for layer in network:
         new_inputs = []
@@ -113,7 +143,23 @@ def forward_propagate(network, row):
 
 # Calculate the derivative of an neuron output
 def transfer_derivative(output):
-    return output * (1.0 - output)
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
+    
+    ## sigmoid
+    # return output * (1.0 - output)
+    
+    ## ReLu
+    # if(output > 0):
+    #     return 1
+    # else:
+    #     return 0
+
+    ## Elu
+    if(output > 0):
+        return 1
+    else:
+        return (exp(output)-1)
+
 
 # Backpropagate error and store in neurons
 def backward_propagate_error(network, expected):
@@ -133,9 +179,12 @@ def backward_propagate_error(network, expected):
         for j in range(len(layer)):
             neuron = layer[j]
             neuron['delta'] = errors[j] * transfer_derivative(neuron['output'])
+            custom_hist.append(neuron['delta'])
+        
 
 # Update network weights with error
 def update_weights(network, row, l_rate):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     for i in range(len(network)):
         inputs = row[:-1]
         if i != 0:
@@ -144,12 +193,11 @@ def update_weights(network, row, l_rate):
             for j in range(len(inputs)):
                 neuron['weights'][j] += l_rate * neuron['delta'] * inputs[j]
             neuron['weights'][-1] += l_rate * neuron['delta']
-            # print("J : ", j)
-            # print("previous W : ", neuron['weights'][-1])
-            # print("updated W : ", (neuron['weights'][-1] + l_rate * neuron['delta']))
+            
 
 # Train a network for a fixed number of epochs
 def train_network(network, train, l_rate, n_epoch, n_outputs):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     for epoch in range(n_epoch):
         for row in train:
             outputs = forward_propagate(network, row)
@@ -160,6 +208,7 @@ def train_network(network, train, l_rate, n_epoch, n_outputs):
 
 # Initialize a network
 def initialize_network(n_inputs, n_hidden, n_outputs):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     network = list()
     hidden_layer = [{'weights':[random() for i in range(n_inputs + 1)]} for i in range(n_hidden)]
     network.append(hidden_layer)
@@ -169,11 +218,13 @@ def initialize_network(n_inputs, n_hidden, n_outputs):
 
 # Make a prediction with a network
 def predict(network, row):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     outputs = forward_propagate(network, row)
     return outputs.index(max(outputs))
 
 # Backpropagation Algorithm With Stochastic Gradient Descent
 def back_propagation(train, test, l_rate, n_epoch, n_hidden):
+    # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
     n_inputs = len(train[0]) - 1
     n_outputs = len(set([row[-1] for row in train]))
     network = initialize_network(n_inputs, n_hidden, n_outputs)
@@ -187,7 +238,8 @@ def back_propagation(train, test, l_rate, n_epoch, n_hidden):
 print("DEFINED")
 
 
-#%%
+#%% FIT PREDICT EXAMPLE
+custom_hist = []
 # Test Backprop on Seeds dataset
 seed(1)
 # load and prepare data
@@ -199,38 +251,47 @@ for i in range(len(dataset[0])-1):
 str_column_to_int(dataset, len(dataset[0])-1)
 # normalize input variables
 minmax = dataset_minmax(dataset)
-print(minmax)
 normalize_dataset(dataset, minmax)
 # evaluate algorithm
-n_folds = 2
-l_rate = 0.3
-n_epoch = 10
-n_hidden =9
+n_folds = 2         # how many seperates data for validation
+l_rate = 0.5        # learning rate
+n_epoch = 30        # learn repeat
+n_hidden = 10       # neuron count (hidden)
 back_propagation_hist = []
 scores = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 
 
-
 #%%
+import matplotlib.pyplot as plt
+plt.plot(custom_hist)
+# pprint(custom_hist)
+
+
+#%% make hyperparameter history
+l_rate = .0001
 hyperparam_hist = []
-for n_epoch in range(4,20):
-    for n_hidden in range(3,20):
+for n_epoch in (5, 10, 15, 20, 25, 30, 35):
+    for n_hidden in (5, 10, 15, 20, 25, 30, 35):
         scores = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
         hyperparam_hist.append([n_epoch, n_hidden, (sum(scores)/float(len(scores)))])
         print("n_epoch, n_hidden ", n_epoch, n_hidden)
 
-print(hyperparam_hist)
+print("hyperparam_hist : ", hyperparam_hist)
 
 
-#%%
+#%% hyperparameter-accuracy plotting
 # This import registers the 3D projection, but is otherwise unused.
-print(type(hyperparam_hist[0]))
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+
 fig = plt.figure()
+title = "l_rate:"+str(l_rate)
+fig.suptitle(title)
+
 ax = fig.add_subplot(111, projection='3d')
 for i in range(0, len(hyperparam_hist)):
     ax.scatter(xs=hyperparam_hist[i][0], ys=hyperparam_hist[i][1], zs=hyperparam_hist[i][2], c='r', marker="o")
@@ -239,14 +300,33 @@ ax.set_ylabel('n_hidden')
 ax.set_zlabel('accuracy')
 plt.show()
 
-#%%
-import pandas as pd
 fig = plt.figure()
-ax = fig.gca(projection='3d')
+bx = fig.gca(projection='3d')
 df = pd.DataFrame(hyperparam_hist, columns=['x','y','z'])
-surf = ax.plot_trisurf(df.x, df.y, df.z, linewidth=0.1)
-ax.set_xlabel('n_epoch')
-ax.set_ylabel('n_hidden')
-ax.set_zlabel('accuracy')
+surf = bx.plot_trisurf(df.x, df.y, df.z, linewidth=0.1)
+bx.set_xlabel('n_epoch')
+bx.set_ylabel('n_hidden')
+bx.set_zlabel('accuracy')
 plt.show()
+
+fig = plt.figure()
+cx = fig.gca(projection='3d')
+df = pd.DataFrame(hyperparam_hist, columns=['x','y','z'])
+surf = cx.plot_trisurf(df.x, df.y, df.z, linewidth=0.1)
+cx.set_xlabel('n_epoch')
+cx.set_ylabel('n_hidden')
+cx.set_zlabel('accuracy')
+cx.view_init(azim=15)
+plt.show()
+
+fig = plt.figure()
+cx = fig.gca(projection='3d')
+df = pd.DataFrame(hyperparam_hist, columns=['x','y','z'])
+surf = cx.plot_trisurf(df.x, df.y, df.z, linewidth=0.1)
+cx.set_xlabel('n_epoch')
+cx.set_ylabel('n_hidden')
+cx.set_zlabel('accuracy')
+cx.view_init(azim=-15)
+plt.show()
+
 
