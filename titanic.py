@@ -1,47 +1,43 @@
-
 #%%
-import os, sys, copy
+import os, sys
+from pprint import pprint
+import pandas as pd
+import numpy
+from sklearn.preprocessing import LabelBinarizer
 root_path = os.path.dirname(os.path.abspath('__file__'))
-# work_path = root_path + "/neural_tutorial"
-data_path = root_path + "/data"
+data_path = root_path + "/data/titanic/"
 sys.path.append(root_path)
 
 from DNN import DNN
 from random import seed
-from pprint import pprint
-
 seed(1)
 
 dnn = DNN()
-file_path = data_path + "/seeds_dataset.csv"
-original_dataset = dnn.load_csv(file_path)
-# pprint(dataset)
 
+dataset = pd.read_csv(data_path + "train.csv")
+# dataset = dnn.load_csv(data_path + "train.csv")
 
-
-
-
+dataset = dataset[['Age', 'SibSp', 'Pclass', 'Parch', 'Fare', 'Survived']]
+dataset = dataset.dropna(axis=0)
+dataset = dataset.values.tolist()
+print(dataset)
+dnn.str_column_to_int(dataset, len(dataset[0])-1)
 
 
 
 #%%
-dataset = copy.deepcopy(original_dataset)           # To avoid copy by reference
-for i in range(len(dataset[0])-1):
-    dnn.str_column_to_float(dataset, i)
-# convert class column to integers
-dnn.str_column_to_int(dataset, len(dataset[0])-1)
 # normalize input variables
 dnn.minmax = dnn.dataset_minmax(dataset)
 dnn.normalize_dataset(dataset, dnn.minmax)
 # evaluate algorithm
 n_folds = 2         # how many seperates data for validation
-l_rate = 0.001        # learning rate
+l_rate = 0.1        # learning rate
 n_epoch = 50        # learn repeat
 n_hidden = 10       # neuron count (hidden)
 
 back_propagation = dnn.back_propagation
+dnn.activation_function = 'sigmoid'
 scores = dnn.evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
-
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 
@@ -52,20 +48,18 @@ print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 
 
 
+
 #%% make hyperparameter history
 l_rate = .001
+dnn.activation_function = 'sigmoid'
 hyperparam_hist = []
-for n_epoch in range(5, 25, 5):
-    for n_hidden in range(5, 25, 5):
+for n_epoch in range(50, 120, 10):
+    for n_hidden in range(5, 15, 5):
         scores = dnn.evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
         hyperparam_hist.append([n_epoch, n_hidden, (sum(scores)/float(len(scores)))])
         print("n_epoch, n_hidden ", n_epoch, n_hidden)
 
 print("hyperparam_hist : ", hyperparam_hist)
-
-
-
-
 
 
 

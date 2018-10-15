@@ -14,6 +14,11 @@ class DNN:
 
     minmax = list()
 
+    ## sigmoid
+    ## relu
+    ## elu
+    activation_function = 'elu'
+
     # Load a CSV file
     def load_csv(self, filename):
         print(filename)
@@ -115,17 +120,18 @@ class DNN:
     def transfer(self, activation):
         # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
         
-        ## sigmoid
-        # return 1.0 / (1.0 + exp(-activation))
-        
-        ## ReLu
-        # return max(0, activation)
-
-        ## Elu
-        if(activation>=0):
-            return activation
+        if(self.activation_function == 'sigmoid'):
+            ## sigmoid
+            return 1.0 / (1.0 + exp(-activation))
+        elif(self.activation_function == 'relu'):
+            ## ReLu
+            return max(0, activation)
         else:
-            return (exp(activation)-1)
+            ## Elu
+            if(activation>=0):
+                return activation
+            else:
+                return (exp(activation)-1)
 
 
 
@@ -146,20 +152,22 @@ class DNN:
     def transfer_derivative(self, output):
         # print("[FUNCTION] : ",inspect.getframeinfo(inspect.currentframe()).function)
         
-        ## sigmoid
-        # return output * (1.0 - output)
-        
-        ## ReLu
-        # if(output > 0):
-        #     return 1
-        # else:
-        #     return 0
+        if(self.activation_function == 'sigmoid'):
+            # sigmoid
+            return output * (1.0 - output)
 
-        ## Elu
-        if(output > 0):
-            return 1
+        elif(self.activation_function == 'relu'):
+            # ReLu
+            if(output > 0):
+                return 1
+            else:
+                return 0
         else:
-            return (exp(output)-1)
+            # Elu
+            if(output > 0):
+                return 1
+            else:
+                return (exp(output)-1)
 
 
     # Backpropagate error and store in neurons
