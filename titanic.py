@@ -50,11 +50,11 @@ print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 
 
 #%% make hyperparameter history
-l_rate = .001
+l_rate = .01
 dnn.activation_function = 'sigmoid'
 hyperparam_hist = []
-for n_epoch in range(50, 120, 10):
-    for n_hidden in range(5, 15, 5):
+for n_epoch in (100, 300):
+    for n_hidden in (5, 15):
         scores = dnn.evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
         hyperparam_hist.append([n_epoch, n_hidden, (sum(scores)/float(len(scores)))])
         print("n_epoch, n_hidden ", n_epoch, n_hidden)
