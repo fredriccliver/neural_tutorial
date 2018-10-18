@@ -14,9 +14,9 @@ class DNN:
 
     minmax = list()
 
-    ## sigmoid
-    ## relu
-    ## elu
+    ## sigmoid, relu, elu 를 선택할 수 있습니다.
+    ## 이 파일에서 수정하지 마시고, dnn = DNN() 으로 선언 후,
+    ## dnn.activation_function = 'sigmoid' 식으로 선언하시면 됩니다.
     activation_function = 'elu'
 
     # Load a CSV file

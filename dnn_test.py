@@ -1,5 +1,5 @@
 
-#%%
+#%% import 및 data load
 import os, sys, copy
 root_path = os.path.dirname(os.path.abspath('__file__'))
 # work_path = root_path + "/neural_tutorial"
@@ -14,6 +14,8 @@ seed(1)
 
 dnn = DNN()
 file_path = data_path + "/seeds_dataset.csv"
+
+# pandas에서는 DataFrame 타입으로 data 를 처리하지면 여기서는 일반 python list 형태로 데이터를 처리합니다.
 original_dataset = dnn.load_csv(file_path)
 # pprint(dataset)
 

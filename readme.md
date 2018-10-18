@@ -11,3 +11,5 @@
 
 애초에는 neuralnet.py 한 개의 파일로 제작. (neuralnet.py 파일 삭제 예정)
 이후, DNN.py 로 클래스 구성하고, dnn_test.py 로 테스트.
+
+dnn library 개발환경 설정 및 custom dnn을 만드는 과정을 동영상으로 남겨서 추후에 참여하고 하시는 분들도 쉽게 따라해보실 수 있도록 하면 좋을 것 같습니다.
