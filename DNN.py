@@ -63,6 +63,8 @@ class DNN:
         for row in dataset:
             for i in range(len(row)-1):
                 row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
+                # minmax[i][0] : i번쨰 feature의 최소값
+                # minmax[i][1] : i번째 feature의 최대값
 
     # Split a dataset into k folds
     def cross_validation_split(self, dataset, n_folds):
@@ -132,8 +134,6 @@ class DNN:
                 return activation
             else:
                 return (exp(activation)-1)
-
-
 
     # Forward propagate input to a network output
     def forward_propagate(self, network, row):
