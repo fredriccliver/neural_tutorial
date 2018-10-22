@@ -17,6 +17,8 @@ dnn = DNN()
 dataset = pd.read_csv(data_path + "train.csv")
 # dataset = dnn.load_csv(data_path + "train.csv")
 
+
+
 dataset = dataset[['Age', 'SibSp', 'Pclass', 'Parch', 'Fare', 'Survived']]
 dataset = dataset.dropna(axis=0)
 dataset = dataset.values.tolist()
@@ -53,8 +55,8 @@ print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 l_rate = .01
 dnn.activation_function = 'sigmoid'
 hyperparam_hist = []
-for n_epoch in (100, 300):
-    for n_hidden in (5, 15):
+for n_epoch in (20, 50, 70, 100, 150, 300):
+    for n_hidden in (5, 10, 15):
         scores = dnn.evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
         hyperparam_hist.append([n_epoch, n_hidden, (sum(scores)/float(len(scores)))])
         print("n_epoch, n_hidden ", n_epoch, n_hidden)
