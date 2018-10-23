@@ -15,3 +15,6 @@
 dnn library 개발환경 설정 및 custom dnn을 만드는 과정을 동영상으로 남겨서 추후에 참여하고 하시는 분들도 쉽게 따라해보실 수 있도록 하면 좋을 것 같습니다.
 
 작성 중인 Article : https://medium.com/@fredriccliver/%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5-lecture-6bf0a40bd407
+
+
+간단한 neural net 을 이해하기에는 11line_nn.py 예제로도 충분합니다.
