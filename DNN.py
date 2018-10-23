@@ -11,7 +11,7 @@ import sys
 from pprint import pprint
 
 class DNN:
-
+    debug_mode = False
     minmax = list()
 
     ## sigmoid, relu, elu 를 선택할 수 있습니다.

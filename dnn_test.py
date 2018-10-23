@@ -20,12 +20,6 @@ original_dataset = dnn.load_csv(file_path)
 # pprint(dataset)
 
 
-
-
-
-
-
-
 #%%
 dataset = copy.deepcopy(original_dataset)           # To avoid copy by reference
 for i in range(len(dataset[0])-1):
@@ -50,15 +44,15 @@ print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
 
 
 
-
-
-
-
-#%% make hyperparameter history
-l_rate = .001
+#%% hyper parameter test
+l_rate = .1
+hyperparam_label = ["n_epoch", "n_hidden"]
+dnn.activation_function = 'sigmoid'
+# elu, l_rate .0001 은 편차 높음.
+# sigmoid, l_rate .1 은 편차가 낮음.
 hyperparam_hist = []
-for n_epoch in range(5, 25, 5):
-    for n_hidden in range(5, 25, 5):
+for n_epoch in range(5, 40, 5):
+    for n_hidden in range(5, 40, 5):
         scores = dnn.evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
         hyperparam_hist.append([n_epoch, n_hidden, (sum(scores)/float(len(scores)))])
         print("n_epoch, n_hidden ", n_epoch, n_hidden)
@@ -66,8 +60,19 @@ for n_epoch in range(5, 25, 5):
 print("hyperparam_hist : ", hyperparam_hist)
 
 
+#%% l_rate 위주로 테스트
+# n_hidden은 10으로 고정.
+n_hidden = 10
+hyperparam_label = ["n_epoch", "l_rate"]
+dnn.activation_function = 'sigmoid'
+hyperparam_hist = []
+for n_epoch in range(5, 50, 5):
+    for l_rate in [0.1 ,0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001]:
+        scores = dnn.evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
+        hyperparam_hist.append([n_epoch, l_rate, (sum(scores)/float(len(scores)))])
+        print("n_epoch, l_rate ", n_epoch, l_rate)
 
-
+print("hyperparam_hist : ", hyperparam_hist)
 
 
 
@@ -86,8 +91,8 @@ fig.suptitle(title)
 ax = fig.add_subplot(111, projection='3d')
 for i in range(0, len(hyperparam_hist)):
     ax.scatter(xs=hyperparam_hist[i][0], ys=hyperparam_hist[i][1], zs=hyperparam_hist[i][2], c='r', marker="o")
-ax.set_xlabel('n_epoch')
-ax.set_ylabel('n_hidden')
+ax.set_xlabel(hyperparam_label[0])
+ax.set_ylabel(hyperparam_label[1])
 ax.set_zlabel('accuracy')
 plt.show()
 
@@ -95,8 +100,8 @@ fig = plt.figure()
 bx = fig.gca(projection='3d')
 df = pd.DataFrame(hyperparam_hist, columns=['x','y','z'])
 surf = bx.plot_trisurf(df.x, df.y, df.z, linewidth=0.1)
-bx.set_xlabel('n_epoch')
-bx.set_ylabel('n_hidden')
+bx.set_xlabel(hyperparam_label[0])
+bx.set_ylabel(hyperparam_label[1])
 bx.set_zlabel('accuracy')
 plt.show()
 
@@ -104,8 +109,8 @@ fig = plt.figure()
 cx = fig.gca(projection='3d')
 df = pd.DataFrame(hyperparam_hist, columns=['x','y','z'])
 surf = cx.plot_trisurf(df.x, df.y, df.z, linewidth=0.1)
-cx.set_xlabel('n_epoch')
-cx.set_ylabel('n_hidden')
+cx.set_xlabel(hyperparam_label[0])
+cx.set_ylabel(hyperparam_label[1])
 cx.set_zlabel('accuracy')
 cx.view_init(azim=15)
 plt.show()
@@ -114,8 +119,8 @@ fig = plt.figure()
 cx = fig.gca(projection='3d')
 df = pd.DataFrame(hyperparam_hist, columns=['x','y','z'])
 surf = cx.plot_trisurf(df.x, df.y, df.z, linewidth=0.1)
-cx.set_xlabel('n_epoch')
-cx.set_ylabel('n_hidden')
+cx.set_xlabel(hyperparam_label[0])
+cx.set_ylabel(hyperparam_label[1])
 cx.set_zlabel('accuracy')
 cx.view_init(azim=-15)
 plt.show()
