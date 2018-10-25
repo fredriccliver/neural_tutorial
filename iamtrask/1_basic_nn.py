@@ -18,6 +18,9 @@ from pprint import pprint
 
 ## sigmoid function 
 ## 숫자를 0 to 1 의 probability 값으로 변환하기 위해. 
+## loss(w) = sig(w) 일 때, loss`(w) = sig(w)*(1-sig(w))
+## 보통 f`(x), 즉 f(x) 도함수에서 값을 계산할 때, x 값을 집어넣어야 하지만,
+## sigmoid 도함수의 특성상, x 값이 아니라, sig(x) 값으로 x에서의 미분 값을 구할 수 있다.
 def nonlin(x, deriv=False): # 4번째 줄
   if (deriv==True): # 5번쨰 줄
     return x*(1-x)
@@ -74,9 +77,9 @@ print("initial W : ", weight_vector)
 # 여기서는 횟수를 조정해봅니다.
 err_history = [] # 각 회차마다의 에러값을 이 배열에 담아둡니다.
 
-print_flag = 0  ## True(1) or False(0)
-iterations = 100
-learning_rate = 1
+print_flag = 1  ## True(1) or False(0)
+iterations = 10
+learning_rate = 5
 print("iterations : ", iterations)
 
 for iter in range(iterations): #25번째줄 
@@ -103,7 +106,7 @@ for iter in range(iterations): #25번째줄
     if(print_flag): 
       print("<< weight_vector >>")
       pprint(weight_vector)
-      print("\r\n")
+      print("\r")
     
     # # l1 은 각 뉴런의 w 값을 모두 가지고 있는 배열입니다. 
     # # (각 뉴런 : y = wx+b)
@@ -113,18 +116,22 @@ for iter in range(iterations): #25번째줄
     ## 현재 예측 값과 실제 값의 차이를 계산.
     l1_error = y - l1 # 32번째 줄 
     err_sum = np.sum(np.abs(l1_error))
-    if(print_flag): print("Total absolute error : ", err_sum )
+    if(print_flag): print("Total absolute error : ", err_sum , "\n")
     err_history.append(err_sum)
 
     # 우리가 놓친 것들과 
     # 11 의 시그모이드 경사와 곱하기.
     l1_delta = l1_error * nonlin(l1, True) # 36번째 줄
     
+    # print("<< l1 >>")
+    # print(l1)
+    # print(nonlin(l1, True))
+    # print("\r")
 
     
 
     # weight 업뎃
-    weight_vector += np.dot(l0.T, l1_delta) # *learning_rate
+    weight_vector += np.dot(l0.T, l1_delta) * learning_rate
     # 업데이트 전에 learning rate 를 곱해줘도 됩니다.
     # 일반적으로 과도한 update 가 되지 않도록 1 이하의 값을 곱해주지만,
     # 여기서는 학습을 가속하기 위해 5(1이상의 값)를 곱해도 됩니다.
