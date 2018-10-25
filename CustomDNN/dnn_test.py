@@ -6,7 +6,7 @@ root_path = os.path.dirname(os.path.abspath('__file__'))
 data_path = root_path + "/data"
 sys.path.append(root_path)
 
-from DNN import DNN
+from CustomDNN.DNN import DNN
 from random import seed
 from pprint import pprint
 
