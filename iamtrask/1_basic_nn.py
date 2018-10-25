@@ -34,7 +34,6 @@ def relu(x, deriv=False):
     if(x>=0): return x
     else: return 0
 
-
 #input dataset
 X = np.array([            #10번째 줄 
               [0,0,1], 
@@ -49,13 +48,12 @@ y = np.array([[0,1,1,0]]).T # 16번째 줄
 # pprint(y)
 
 
-
-
 #%% Initialize Weight
-# np.random.seed(1) #20번째 줄 
+np.random.seed(6) #20번째 줄 
 # # 계산을 위한 시드 설정
 # # 실험의 편의를 위해 항상 같은 값이 나오게 한다. (weight 를 랜덤으로 초기화하기 때문)
 # # 하지만 초기 weight 값의 편차나 mixmax 따라 학습과정이 어떻게 다른지를 보려면 주석처리 한다.
+
 
 # weights를 랜덤적으로 mean of 0으로 초기화하자.
 feature_cnt = X.shape[1] ## w 는 feature 의 갯수만큼의 dimension을 갖습니다.
@@ -69,17 +67,14 @@ print("initial W : ", weight_vector)
 # np.mean(2 * np.random.random((10000,1)) - 1 ) ## 평균은 0
 
 
-
-
-
 ##%% iteration
 # 원본소스는 10000 회를 반복하지만 학습과정을 자세히 print 해보기 위해,
 # 여기서는 횟수를 조정해봅니다.
 err_history = [] # 각 회차마다의 에러값을 이 배열에 담아둡니다.
 
-print_flag = 1  ## True(1) or False(0)
-iterations = 10
-learning_rate = 5
+print_flag = 0  ## True(1) or False(0)
+iterations = 1000
+learning_rate = 0.5
 print("iterations : ", iterations)
 
 for iter in range(iterations): #25번째줄 
@@ -112,6 +107,14 @@ for iter in range(iterations): #25번째줄
     # # (각 뉴런 : y = wx+b)
     # print("l1 : ", l1)
     
+  
+
+#%%
+a = 1
+a
+
+#%%
+
     # 우리가 얼마나 놓쳤는가?
     ## 현재 예측 값과 실제 값의 차이를 계산.
     l1_error = y - l1 # 32번째 줄 
@@ -123,12 +126,11 @@ for iter in range(iterations): #25번째줄
     # 11 의 시그모이드 경사와 곱하기.
     l1_delta = l1_error * nonlin(l1, True) # 36번째 줄
     
-    # print("<< l1 >>")
-    # print(l1)
-    # print(nonlin(l1, True))
-    # print("\r")
-
-    
+    print("<< l1 >>")
+    print(l1)
+    print("<< l1 >>")
+    print(nonlin(l1, True))
+    print("\r")
 
     # weight 업뎃
     weight_vector += np.dot(l0.T, l1_delta) * learning_rate

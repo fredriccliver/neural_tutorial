@@ -33,7 +33,7 @@ dnn.normalize_dataset(dataset, dnn.minmax)
 n_folds = 2         # how many seperates data for validation
 l_rate = 0.001        # learning rate
 n_epoch = 50        # learn repeat
-n_hidden = 10       # neuron count (hidden)
+n_hidden = 100       # neuron count (hidden)
 
 back_propagation = dnn.back_propagation
 scores = dnn.evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
